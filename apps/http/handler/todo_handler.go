@@ -20,8 +20,9 @@ func NewTodoHandler(fiberInstance *fiber.App, svc *service.Service) *TodoHandler
 }
 
 func (h *TodoHandler) Router() {
-	h.fiberInstance.Get("/todos", h.findAllTodos)
-	h.fiberInstance.Get("/todo-create", h.createTodo)
+	todos := h.fiberInstance.Group("/todos")
+	todos.Get("/", h.findAllTodos)
+	todos.Get("/create", h.createTodo)
 }
 
 func (h *TodoHandler) findAllTodos(c *fiber.Ctx) error {

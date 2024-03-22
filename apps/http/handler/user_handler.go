@@ -20,8 +20,9 @@ func NewUserHandler(fiberInstance *fiber.App, svc *service.Service) *UserHandler
 }
 
 func (h *UserHandler) Router() {
-	h.fiberInstance.Get("/users", h.findAllUsers)
-	h.fiberInstance.Get("/user-create", h.createUser)
+	user := h.fiberInstance.Group("/users")
+	user.Get("/", h.findAllUsers)
+	user.Get("/create", h.createUser)
 }
 
 func (h *UserHandler) findAllUsers(c *fiber.Ctx) error {
