@@ -1,14 +1,20 @@
 package repository
 
-import "gorm.io/gorm"
+import (
+	"go.mongodb.org/mongo-driver/mongo"
+	"gorm.io/gorm"
+)
 
 type Repository struct {
 	User *UserRepository
+	Todo *TodoRepository
 }
 
-func NewRepository(db *gorm.DB) *Repository {
-	user := NewUserRepository(db)
+func NewRepository(gormDB *gorm.DB, mongoDB *mongo.Database) *Repository {
+	user := NewUserRepository(gormDB)
+	todo := NewTodoRepository(mongoDB)
 	return &Repository{
 		User: user,
+		Todo: todo,
 	}
 }

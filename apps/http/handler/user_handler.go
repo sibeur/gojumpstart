@@ -20,11 +20,11 @@ func NewUserHandler(fiberInstance *fiber.App, svc *service.Service) *UserHandler
 }
 
 func (h *UserHandler) Router() {
-	h.fiberInstance.Get("/users", h.FindAllUsers)
-	h.fiberInstance.Get("/user-create", h.CreateUser)
+	h.fiberInstance.Get("/users", h.findAllUsers)
+	h.fiberInstance.Get("/user-create", h.createUser)
 }
 
-func (h *UserHandler) FindAllUsers(c *fiber.Ctx) error {
+func (h *UserHandler) findAllUsers(c *fiber.Ctx) error {
 	users, err := h.svc.User.FindAll()
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -35,7 +35,7 @@ func (h *UserHandler) FindAllUsers(c *fiber.Ctx) error {
 	return c.JSON(users)
 }
 
-func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
+func (h *UserHandler) createUser(c *fiber.Ctx) error {
 	user := &entity.User{
 		Username: "username",
 		Email:    "email",
