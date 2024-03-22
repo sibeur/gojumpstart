@@ -5,6 +5,7 @@ import (
 	"gojumpstart/core/service"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
 type FiberApp struct {
@@ -24,16 +25,24 @@ func NewFiberApp(service *service.Service) *FiberApp {
 	}
 }
 
-func (f *FiberApp) middlewares() {
-	// f.Instance.Use(func(c *fiber.Ctx) error {
-	// 	c.Set("X-Request-ID", "123456")
-	// 	return c.Next()
-	// })
+func (f *FiberApp) beforeMiddlewares() {
+	f.Instance.Use(recover.New(recover.Config{
+		EnableStackTrace: true,
+	}))
+}
+
+func (f *FiberApp) afterMiddlewares() {
+
 }
 
 func (f *FiberApp) Run() {
-	f.middlewares()
+	f.beforeMiddlewares()
+	f.Instance.Get("/", func(c *fiber.Ctx) error {
+		panic("Error")
+		return c.SendString("Hello, World!")
+	})
 	f.userHandler.Router()
 	f.todoHandler.Router()
+	f.afterMiddlewares()
 	f.Instance.Listen(":3000")
 }
