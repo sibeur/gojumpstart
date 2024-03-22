@@ -11,6 +11,7 @@ type FiberApp struct {
 	Instance    *fiber.App
 	Svc         *service.Service
 	userHandler *handler.UserHandler
+	todoHandler *handler.TodoHandler
 }
 
 func NewFiberApp(service *service.Service) *FiberApp {
@@ -19,6 +20,7 @@ func NewFiberApp(service *service.Service) *FiberApp {
 		Instance:    instance,
 		Svc:         service,
 		userHandler: handler.NewUserHandler(instance, service),
+		todoHandler: handler.NewTodoHandler(instance, service),
 	}
 }
 
@@ -32,5 +34,6 @@ func (f *FiberApp) middlewares() {
 func (f *FiberApp) Run() {
 	f.middlewares()
 	f.userHandler.Router()
+	f.todoHandler.Router()
 	f.Instance.Listen(":3000")
 }

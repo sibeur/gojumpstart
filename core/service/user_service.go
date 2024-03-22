@@ -14,7 +14,11 @@ func NewUserService(repo *repository.Repository) *UserService {
 }
 
 func (u *UserService) FindAll() ([]*entity.User, error) {
-	return u.repo.User.FindAll()
+	result, err := u.repo.User.FindAll()
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
 func (u *UserService) Create(user *entity.User) error {

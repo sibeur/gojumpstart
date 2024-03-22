@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	app_http "gojumpstart/apps/http"
 	core_db "gojumpstart/core/db"
 	core_repository "gojumpstart/core/repository"
@@ -15,23 +16,30 @@ func main() {
 	godotenv.Load()
 
 	// database connection
-	db, err := core_db.NewMySQLConnection()
+	gormDB, err := core_db.NewMySQLConnection()
 	if err != nil {
 		panic(err)
 	}
 
 	// close db connection
-	sqlDB, err := db.DB()
+	sqlDB, err := gormDB.DB()
 	if err != nil {
 		panic(err)
 	}
 	defer sqlDB.Close()
 
 	//optional to auto migrate
-	core_db.AutoMigrate(db)
+	core_db.AutoMigrate(gormDB)
+
+	// load mongodb
+	mongoDB, err := core_db.NewMongoDBConnection()
+	if err != nil {
+		panic(err)
+	}
+	defer mongoDB.Client().Disconnect(context.Background())
 
 	// load reapository
-	repo := core_repository.NewRepository(db)
+	repo := core_repository.NewRepository(gormDB, mongoDB)
 
 	// load service
 	service := core_service.NewService(repo)
