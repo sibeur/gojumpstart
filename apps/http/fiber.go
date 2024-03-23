@@ -11,6 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// FiberApp represents a Fiber application.
 type FiberApp struct {
 	Instance    *fiber.App
 	Svc         *service.Service
@@ -18,6 +19,7 @@ type FiberApp struct {
 	todoHandler *handler.TodoHandler
 }
 
+// NewFiberApp creates a new instance of FiberApp.
 func NewFiberApp(service *service.Service) *FiberApp {
 	instance := fiber.New()
 	return &FiberApp{
@@ -28,26 +30,33 @@ func NewFiberApp(service *service.Service) *FiberApp {
 	}
 }
 
+// beforeMiddlewares sets up the middlewares to be executed before the main request handler.
 func (f *FiberApp) beforeMiddlewares() {
-	f.Instance.Use(recover.New(recover.Config{
-		EnableStackTrace: true,
-	}))
 	appEnv := os.Getenv("APP_ENV")
-	logger, _ := zap.NewDevelopment()
 
+	// Create a zap logger
+	logger, _ := zap.NewDevelopment()
 	if appEnv == "prod" {
 		logger, _ = zap.NewProduction()
 	}
 
+	// Add fiberzap middleware
 	f.Instance.Use(fiberzap.New(fiberzap.Config{
 		Logger: logger,
 	}))
+
+	// Add recover middleware
+	f.Instance.Use(recover.New(recover.Config{
+		EnableStackTrace: true,
+	}))
 }
 
+// afterMiddlewares sets up the middlewares to be executed after the main request handler.
 func (f *FiberApp) afterMiddlewares() {
 
 }
 
+// Run starts the Fiber application and listens for incoming requests.
 func (f *FiberApp) Run() {
 	f.beforeMiddlewares()
 	f.Instance.Get("/", func(c *fiber.Ctx) error {
