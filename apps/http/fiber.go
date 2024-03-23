@@ -3,9 +3,12 @@ package http
 import (
 	"gojumpstart/apps/http/handler"
 	"gojumpstart/core/service"
+	"os"
 
+	"github.com/gofiber/contrib/fiberzap/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"go.uber.org/zap"
 )
 
 type FiberApp struct {
@@ -28,6 +31,16 @@ func NewFiberApp(service *service.Service) *FiberApp {
 func (f *FiberApp) beforeMiddlewares() {
 	f.Instance.Use(recover.New(recover.Config{
 		EnableStackTrace: true,
+	}))
+	appEnv := os.Getenv("APP_ENV")
+	logger, _ := zap.NewDevelopment()
+
+	if appEnv == "prod" {
+		logger, _ = zap.NewProduction()
+	}
+
+	f.Instance.Use(fiberzap.New(fiberzap.Config{
+		Logger: logger,
 	}))
 }
 
