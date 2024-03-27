@@ -28,12 +28,10 @@ func (h *UserHandler) Router() {
 func (h *UserHandler) findAllUsers(c *fiber.Ctx) error {
 	users, err := h.svc.User.FindAll()
 	if err != nil {
-		c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": err.Error(),
-		})
+		return errorResponse(c, fiber.StatusInternalServerError, err.Error(), nil)
 	}
 
-	return c.JSON(users)
+	return successResponse(c, "Success", users)
 }
 
 func (h *UserHandler) createUser(c *fiber.Ctx) error {
@@ -45,10 +43,8 @@ func (h *UserHandler) createUser(c *fiber.Ctx) error {
 
 	err := h.svc.User.Create(user)
 	if err != nil {
-		c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": err.Error(),
-		})
+		return errorResponse(c, fiber.StatusInternalServerError, err.Error(), nil)
 	}
 
-	return c.JSON(user)
+	return successResponse(c, "", user)
 }

@@ -26,29 +26,25 @@ func (h *TodoHandler) Router() {
 }
 
 func (h *TodoHandler) findAllTodos(c *fiber.Ctx) error {
-	users, err := h.svc.Todo.FindAll()
+	todos, err := h.svc.Todo.FindAll()
 	if err != nil {
-		c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": err.Error(),
-		})
+		return errorResponse(c, fiber.StatusInternalServerError, err.Error(), nil)
 	}
 
-	return c.JSON(users)
+	return successResponse(c, "", todos)
 }
 
 func (h *TodoHandler) createTodo(c *fiber.Ctx) error {
-	user := &entity.Todo{
+	todo := &entity.Todo{
 		Title: "Foo",
 		Desc:  "Bar",
 		Done:  false,
 	}
 
-	err := h.svc.Todo.Create(user)
+	err := h.svc.Todo.Create(todo)
 	if err != nil {
-		c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": err.Error(),
-		})
+		return errorResponse(c, fiber.StatusInternalServerError, err.Error(), nil)
 	}
 
-	return c.JSON(user)
+	return successResponse(c, "", todo)
 }
