@@ -2,6 +2,7 @@ package http
 
 import (
 	"gojumpstart/apps/http/handler"
+	"gojumpstart/core/common"
 	"gojumpstart/core/service"
 	"os"
 
@@ -21,7 +22,9 @@ type FiberApp struct {
 
 // NewFiberApp creates a new instance of FiberApp.
 func NewFiberApp(service *service.Service) *FiberApp {
-	instance := fiber.New()
+	instance := fiber.New(fiber.Config{
+		ErrorHandler: common.FiberDefaultErrorHandler,
+	})
 	return &FiberApp{
 		Instance:    instance,
 		Svc:         service,
