@@ -7,7 +7,7 @@ import (
 )
 
 func successResponse(c *fiber.Ctx, message string, data any, meta any) error {
-	jsonResp := fiber.Map{"message": message, "meta": meta, "data": data}
+	jsonResp := fiber.Map{"message": message, "data": data, "meta": meta, "errors": nil}
 	return c.JSON(jsonResp)
 }
 
