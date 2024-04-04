@@ -1,13 +1,17 @@
 package handler
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"gojumpstart/core/common"
 
-func successResponse(c *fiber.Ctx, message string, data any) error {
-	jsonResp := fiber.Map{"message": message, "data": data}
+	"github.com/gofiber/fiber/v2"
+)
+
+func successResponse(c *fiber.Ctx, message string, data any, meta any) error {
+	jsonResp := fiber.Map{"message": message, "meta": meta, "data": data}
 	return c.JSON(jsonResp)
 }
 
-func errorResponse(c *fiber.Ctx, httpStatus int, message string, data any) error {
-	jsonResp := fiber.Map{"message": message, "data": data}
+func errorResponse(c *fiber.Ctx, httpStatus int, message string, errorMessages []common.FiberErrorMessage, data any) error {
+	jsonResp := fiber.Map{"message": message, "data": data, "meta": nil, "errors": errorMessages}
 	return c.Status(httpStatus).JSON(jsonResp)
 }

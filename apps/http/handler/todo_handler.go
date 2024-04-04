@@ -28,10 +28,10 @@ func (h *TodoHandler) Router() {
 func (h *TodoHandler) findAllTodos(c *fiber.Ctx) error {
 	todos, err := h.svc.Todo.FindAll()
 	if err != nil {
-		return errorResponse(c, fiber.StatusInternalServerError, err.Error(), nil)
+		return errorResponse(c, fiber.StatusInternalServerError, err.Error(), nil, nil)
 	}
 
-	return successResponse(c, "", todos)
+	return successResponse(c, "", todos, nil)
 }
 
 func (h *TodoHandler) createTodo(c *fiber.Ctx) error {
@@ -43,8 +43,8 @@ func (h *TodoHandler) createTodo(c *fiber.Ctx) error {
 
 	err := h.svc.Todo.Create(todo)
 	if err != nil {
-		return errorResponse(c, fiber.StatusInternalServerError, err.Error(), nil)
+		return errorResponse(c, fiber.StatusInternalServerError, err.Error(), nil, nil)
 	}
 
-	return successResponse(c, "", todo)
+	return successResponse(c, "", todo, nil)
 }
