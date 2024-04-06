@@ -1,6 +1,8 @@
 package service
 
-import "gojumpstart/core/repository"
+import (
+	"gojumpstart/core/repository"
+)
 
 type Service struct {
 	User *UserService

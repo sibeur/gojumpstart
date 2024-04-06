@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	app_http "gojumpstart/apps/http"
+	core_cache "gojumpstart/core/common/cache"
 	core_db "gojumpstart/core/db"
 	core_repository "gojumpstart/core/repository"
 	core_service "gojumpstart/core/service"
@@ -38,8 +39,10 @@ func main() {
 	}
 	defer mongoDB.Client().Disconnect(context.Background())
 
+	cache := core_cache.NewCache()
+
 	// load reapository
-	repo := core_repository.NewRepository(gormDB, mongoDB)
+	repo := core_repository.NewRepository(gormDB, mongoDB, cache)
 
 	// load service
 	service := core_service.NewService(repo)
