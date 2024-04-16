@@ -1,23 +1,27 @@
 package pubsub
 
-import "gojumpstart/core/service"
+import (
+	"gojumpstart/apps/pubsub/handler"
+	core_pubsub "gojumpstart/core/common/pubsub"
+	"gojumpstart/core/service"
+)
 
-type PubSubApp struct {
-	// cloud pubsub client
-	// Client *pubsub.Client
-	// core service
-	Svc *service.Service
-	// handler
+type App struct {
+	Instance    *core_pubsub.PubSubApp
+	Svc         *service.Service
+	userHandler *handler.UserHandler
 }
 
-func NewPubSubApp(service *service.Service) *PubSubApp {
-	return &PubSubApp{
-		Svc: service,
+func NewApp(service *service.Service) *App {
+	instance := core_pubsub.NewPubSubApp(service)
+	return &App{
+		Instance:    instance,
+		Svc:         service,
+		userHandler: handler.NewUserHandler(instance, service),
 	}
 }
 
-func (p *PubSubApp) Run() {
-	// p.Client = pubsub.NewClient(context.Background(), "project-id")
-	// defer p.Client.Close()
-	// p.subscribe()
+func (a *App) Run() {
+	a.userHandler.Router()
+	a.Instance.Run()
 }
