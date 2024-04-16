@@ -50,5 +50,5 @@ func main() {
 	service := core_service.NewService(repo)
 
 	// start pubsub app
-	app_pubsub.NewPubSubApp(service).Run()
+	app_pubsub.NewApp(service).Run()
 }
