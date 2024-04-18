@@ -10,13 +10,13 @@ Our starter concept is inspired from NestJS who can shared one core business log
 
 There are some component you should know such as
 
-1. core/repository
+1. core/repository  
 Dealing data operation for business logics, data can be from DB or other APIs.
-2. core/service
+2. core/service  
 Business logic that will be using to your app.
-3. apps
+3. apps  
 Your apps will be here. Apps can be Restful API, Cloud Pub Sub, RabbitMQ Subscriber, etc.
-4. core/common
+4. core/common  
 Shared library for across project, it can be helpers, contants, cache library, etc.
 
 ## Depedencies
