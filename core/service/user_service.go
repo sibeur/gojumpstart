@@ -1,6 +1,7 @@
 package service
 
 import (
+	"gojumpstart/core/common/helper"
 	"gojumpstart/core/entity"
 	"gojumpstart/core/repository"
 )
@@ -19,6 +20,10 @@ func (u *UserService) FindAll() ([]*entity.User, error) {
 		return nil, err
 	}
 	return result, nil
+}
+
+func (u *UserService) FindAllPaginate(currentPage, perPage int64, filters *entity.UserListFilter) (*helper.Pagination, error) {
+	return u.repo.User.FindAllPaginate(currentPage, perPage, filters)
 }
 
 func (u *UserService) Create(user *entity.User) error {

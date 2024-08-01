@@ -30,17 +30,23 @@ func (h *UserHandler) Router() {
 }
 
 func (h *UserHandler) findAllUsers(c *fiber.Ctx) error {
-	users, err := h.svc.User.FindAll()
+	page := int64(c.QueryInt("page", 1))
+	perPage := int64(c.QueryInt("per_page", 10))
+	filter := &entity.UserListFilter{
+		Search: c.Query("search", ""),
+	}
+
+	paginateData, err := h.svc.User.FindAllPaginate(page, perPage, filter)
 	if err != nil {
 		return common.ErrorResponse(c, fiber.StatusInternalServerError, err.Error(), nil, nil)
 	}
 
 	response := make([]map[string]any, 0)
 
-	for _, user := range users {
+	for _, user := range paginateData.Data.([]*entity.User) {
 		response = append(response, user.ToJSON())
 	}
-	return common.SuccessResponse(c, "Success", response, nil)
+	return common.SuccessResponse(c, "Success", response, paginateData.Meta)
 }
 
 func (h *UserHandler) createUser(c *fiber.Ctx) error {
