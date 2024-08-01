@@ -2,6 +2,8 @@ package common
 
 import (
 	"fmt"
+	"reflect"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -11,8 +13,26 @@ type FiberValidator struct {
 }
 
 func NewFiberValidator() *FiberValidator {
+	validator := validator.New()
+	validator.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+		v_msg := fld.Tag.Get("v_msg")
+		if v_msg != "" {
+			field := fld.Name
+			if name != "" {
+				field = name
+			}
+			tagName := fmt.Sprintf("@%v|%v", field, v_msg)
+			return tagName
+		}
+		// skip if tag key says it should be ignored
+		if name == "-" {
+			return ""
+		}
+		return name
+	})
 	return &FiberValidator{
-		validator: validator.New(),
+		validator: validator,
 	}
 }
 
@@ -23,9 +43,21 @@ func (v *FiberValidator) Validate(data any) []FiberErrorMessage {
 		for _, err := range errs.(validator.ValidationErrors) {
 			// In this case data object is actually holding the User struct
 			var elem FiberErrorMessage
-
+			field := err.Field()
 			elem.Key = err.Field()
+
 			elem.Value = getErrorMessage(err)
+
+			if v.isCustomMessage(field) {
+				field = strings.ReplaceAll(field, "@", "")
+				splitField := strings.Split(field, "|")
+				elem.Key = splitField[0]
+				elem.Value = getErrorMessageWithCustomMessage(err, splitField[1])
+			}
+
+			if isDiveError(err) {
+				elem.Key = fmt.Sprintf("%v.%v", getDiveStructName(err), elem.Key)
+			}
 
 			validationErrors = append(validationErrors, elem)
 		}
@@ -34,6 +66,37 @@ func (v *FiberValidator) Validate(data any) []FiberErrorMessage {
 	return validationErrors
 }
 
+func isDiveError(err validator.FieldError) bool {
+	// Check if the namespace contains an array index
+	return strings.Contains(err.Namespace(), "[") && strings.Contains(err.Namespace(), "]")
+}
+
+func getDiveStructName(err validator.FieldError) string {
+	return strings.Split(err.Namespace(), ".")[1]
+}
+
+func (v *FiberValidator) isCustomMessage(field string) bool {
+	//check is custom message flag with detect @ character at field
+	return strings.Contains(field, "@")
+}
+
+func parseCustomMessage(stringMsg string) map[string]string {
+	splitMsg := strings.Split(stringMsg, ";")
+	customMessages := map[string]string{}
+	for _, msg := range splitMsg {
+		kvMsg := strings.Split(msg, "=")
+		customMessages[kvMsg[0]] = kvMsg[1]
+	}
+	return customMessages
+}
+
+func getErrorMessageWithCustomMessage(err validator.FieldError, stringMsg string) string {
+	customMessages := parseCustomMessage(stringMsg)
+	if customMessages[err.Tag()] != "" {
+		return customMessages[err.Tag()]
+	}
+	return getErrorMessage(err)
+}
 func getErrorMessage(e validator.FieldError) string {
 	switch e.Tag() {
 	case "required":
