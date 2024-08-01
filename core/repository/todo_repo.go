@@ -4,9 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	core_cache "gojumpstart/core/common/cache"
 	"gojumpstart/core/entity"
 	"log"
+
+	go_cache "github.com/sibeur/go-cache"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -15,10 +16,10 @@ import (
 
 type TodoRepository struct {
 	db    *mongo.Database
-	cache core_cache.CacheUseCase
+	cache go_cache.Cache
 }
 
-func NewTodoRepository(db *mongo.Database, cache core_cache.CacheUseCase) *TodoRepository {
+func NewTodoRepository(db *mongo.Database, cache go_cache.Cache) *TodoRepository {
 	return &TodoRepository{db: db, cache: cache}
 }
 
@@ -52,7 +53,7 @@ func (u *TodoRepository) FindAll() ([]*entity.Todo, error) {
 		todos = append(todos, &todo)
 	}
 
-	go func(data []*entity.Todo, cache core_cache.CacheUseCase) {
+	go func(data []*entity.Todo, cache go_cache.Cache) {
 		// Set the data in the cache as json
 		cacheDataJSON, err := json.Marshal(data)
 		if err != nil {

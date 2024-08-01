@@ -7,7 +7,8 @@ import (
 	core_service "gojumpstart/core/service"
 
 	app_pubsub "gojumpstart/apps/pubsub"
-	core_cache "gojumpstart/core/common/cache"
+
+	go_cache "github.com/sibeur/go-cache"
 
 	"github.com/joho/godotenv"
 )
@@ -41,7 +42,7 @@ func main() {
 	defer mongoDB.Client().Disconnect(context.Background())
 
 	// load cache
-	cache := core_cache.NewCache()
+	cache := go_cache.NewCache()
 
 	// load reapository
 	repo := core_repository.NewRepository(gormDB, mongoDB, cache)

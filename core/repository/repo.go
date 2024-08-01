@@ -1,7 +1,7 @@
 package repository
 
 import (
-	core_cache "gojumpstart/core/common/cache"
+	go_cache "github.com/sibeur/go-cache"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"gorm.io/gorm"
@@ -12,7 +12,7 @@ type Repository struct {
 	Todo *TodoRepository
 }
 
-func NewRepository(gormDB *gorm.DB, mongoDB *mongo.Database, cache core_cache.CacheUseCase) *Repository {
+func NewRepository(gormDB *gorm.DB, mongoDB *mongo.Database, cache go_cache.Cache) *Repository {
 	user := NewUserRepository(gormDB)
 	todo := NewTodoRepository(mongoDB, cache)
 	return &Repository{

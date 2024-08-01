@@ -3,12 +3,12 @@ package main
 import (
 	"context"
 	app_http "gojumpstart/apps/http"
-	core_cache "gojumpstart/core/common/cache"
 	core_db "gojumpstart/core/db"
 	core_repository "gojumpstart/core/repository"
 	core_service "gojumpstart/core/service"
 
 	"github.com/joho/godotenv"
+	go_cache "github.com/sibeur/go-cache"
 )
 
 func main() {
@@ -39,7 +39,7 @@ func main() {
 	}
 	defer mongoDB.Client().Disconnect(context.Background())
 
-	cache := core_cache.NewCache()
+	cache := go_cache.NewCache()
 
 	// load reapository
 	repo := core_repository.NewRepository(gormDB, mongoDB, cache)
