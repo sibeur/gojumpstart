@@ -4,13 +4,13 @@ import (
 	"gojumpstart/core/entity"
 	"os"
 
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func NewMySQLConnection() (*gorm.DB, error) {
-	dsn := os.Getenv("MYSQL_DSN")
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+func NewPostgresConnection() (*gorm.DB, error) {
+	dsn := os.Getenv("POSTGRES_DSN")
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}

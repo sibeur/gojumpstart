@@ -6,22 +6,18 @@ import (
 	"testing"
 )
 
-func TestNewMySQLConnection(t *testing.T) {
+func TestNewPostgresConnection(t *testing.T) {
 	// Set up test environment
 	// ...
-	os.Setenv("MYSQL_DSN", "root:root@tcp(localhost:3306)/test?charset=utf8&parseTime=True&loc=Local")
-
+	os.Setenv("POSTGRES_DSN", "postgres://postgres:root@localhost:5432/test?sslmode=disable")
 	// Call the function being tested
-	db, err := db.NewMySQLConnection()
-
+	db, err := db.NewPostgresConnection()
 	// Check if the function returned an error
 	if err != nil {
-		t.Errorf("NewMySQLConnection() returned an error: %v", err)
+		t.Errorf("NewPostgresConnection() returned an error: %v", err)
 	}
-
 	// Check if the returned database connection is not nil
 	if db == nil {
-		t.Error("NewMySQLConnection() returned a nil database connection")
+		t.Error("NewPostgresConnection() returned a nil database connection")
 	}
-
 }

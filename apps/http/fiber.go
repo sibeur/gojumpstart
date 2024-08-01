@@ -17,7 +17,6 @@ type FiberApp struct {
 	Instance    *fiber.App
 	Svc         *service.Service
 	userHandler *handler.UserHandler
-	todoHandler *handler.TodoHandler
 }
 
 // NewFiberApp creates a new instance of FiberApp.
@@ -29,7 +28,6 @@ func NewFiberApp(service *service.Service) *FiberApp {
 		Instance:    instance,
 		Svc:         service,
 		userHandler: handler.NewUserHandler(instance, service),
-		todoHandler: handler.NewTodoHandler(instance, service),
 	}
 }
 
@@ -67,7 +65,6 @@ func (f *FiberApp) Run() {
 		return c.SendString("Hello, World!")
 	})
 	f.userHandler.Router()
-	f.todoHandler.Router()
 	f.afterMiddlewares()
 	f.Instance.Listen(":3000")
 }
