@@ -1,7 +1,7 @@
 package repository
 
 import (
-	core_cache "gojumpstart/core/common/cache"
+	go_cache "github.com/sibeur/go-cache"
 
 	"gorm.io/gorm"
 )
@@ -10,7 +10,7 @@ type Repository struct {
 	User *UserRepository
 }
 
-func NewRepository(gormDB *gorm.DB, cache core_cache.CacheUseCase) *Repository {
+func NewRepository(gormDB *gorm.DB, cache go_cache.Cache) *Repository {
 	user := NewUserRepository(gormDB)
 	return &Repository{
 		User: user,

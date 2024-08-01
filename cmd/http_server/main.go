@@ -2,10 +2,11 @@ package main
 
 import (
 	app_http "gojumpstart/apps/http"
-	core_cache "gojumpstart/core/common/cache"
 	core_db "gojumpstart/core/db"
 	core_repository "gojumpstart/core/repository"
 	core_service "gojumpstart/core/service"
+
+	go_cache "github.com/sibeur/go-cache"
 
 	"github.com/joho/godotenv"
 )
@@ -31,7 +32,7 @@ func main() {
 	// optional to auto migrate
 	core_db.AutoMigrate(gormDB)
 
-	cache := core_cache.NewCache()
+	cache := go_cache.NewCache()
 
 	// load reapository
 	repo := core_repository.NewRepository(gormDB, cache)
